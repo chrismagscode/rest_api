@@ -47,3 +47,9 @@ class Item(Resource):
             return {"message": "An error occurred inserting the item."}
 
         return item
+
+    def get(self, name):
+        item = self.find_by_name(name)
+        if item:
+            return item
+        return {'message': 'Item not found'}, 404
