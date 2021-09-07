@@ -22,8 +22,20 @@ class Item(Resource):
 
         connection.commit()
         connection.close()
+    
+    @classmethod
+    def find_by_name(cls, name):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM {table} WHERE name=?".format(table=cls.TABLE_NAME)
+        result = cursor.execute(query, (name,))
+        row = result.fetchone()
+        connection.close()
 
     def post(self, name):
+        if self.find_by_name(name):
+            return {'message': "An item with name '{}' already exists.".format(name)}
 
         data = Item.parser.parse_args()
 
