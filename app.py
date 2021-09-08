@@ -2,12 +2,19 @@ from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
 
-from resources.item import Item
+from security import authenticate, identity
+from item import Item
+from user import UserRegister
 
 app = Flask(__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True
+app.secret_key = 'jose'
 api = Api(app)
 
-api.add_resource(Item, '/item/<string:name>')
+jwt = JWT(app, authenticate, identity)
 
-if __name__ =='__main__':
-    app.run(port=5000, debug=True)
+api.add_resource(Item, '/item/<string:name>')
+api.add_resource(UserRegister, '/register')
+
+if __name__ == '__main__':
+    app.run(debug=True)  # important to mention debug=True
