@@ -47,6 +47,16 @@ class Item(Resource):
 
         return {'message': 'Item deleted'}
 
+    @classmethod
+    def update(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "UPDATE {table} SET price=? WHERE name=?".format(table=cls.TABLE_NAME)
+        cursor.execute(query, (item['price'], item['name']))
+
+        connection.commit()
+        connection.close()
+
     def post(self, name):
         if self.find_by_name(name):
             return {'message': "An item with name '{}' already exists.".format(name)}
@@ -66,3 +76,19 @@ class Item(Resource):
         if item:
             return item
         return {'message': 'Item not found'}, 404
+
+    def put(self, name):
+        data = Item.parser.parse_args()
+        item = self.find_by_name(name)
+        updated_item = {'name': name, 'price': data['price']}
+        if item is None:
+            try: 
+                Item.insert(updated_item)
+            except:
+                return {"message": "An error occurred inserting the item."}
+        else:
+            try:
+                Item.update(updated_item)
+            except:
+                return {"message": "An error occurred updating the item."}
+        return updated_item
