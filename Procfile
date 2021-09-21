@@ -1,1 +1,1 @@
-web: uwsgi uwsgi.inigit git
+web: uwsgi uwsgi.ini
