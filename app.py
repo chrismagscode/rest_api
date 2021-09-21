@@ -1,3 +1,4 @@
+import os
 
 from flask import Flask
 from flask_restful import Api
@@ -8,11 +9,9 @@ from resources.user import UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
-import os
-
 app = Flask(__name__)
-uri = str(os.getenv("DATABASE_URL"))  # or other relevant config var
-if uri.startswith("postgres://"):
+uri = os.getenv("DATABASE_URL")  # or other relevant config var
+if str(uri).startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://", 1)
 # rest of connection code using the connection string `uri`
 
